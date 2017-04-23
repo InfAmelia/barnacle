@@ -1,0 +1,8 @@
+#!/bin/bash
+echo 'Running now!'
+# run speedtest and grep for first number match (24 mbps output => 24)
+value=$(speedtest-cli | grep -oP 'Download: [0-9\.]+' | grep -oP [0-9\.]+)
+
+# make api request to influx db
+curl -i -XPOST 'http://localhost:8086/write?db=net' --data-binary "speed value=$value"
+
