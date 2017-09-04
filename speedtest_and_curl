@@ -1,8 +1,11 @@
 #!/bin/bash
-echo 'Running now!'
+echo "Running now on - $(hostname)"
 # run speedtest and grep for first number match (24 mbps output => 24)
-value=$(speedtest-cli | grep -oP 'Download: [0-9\.]+' | grep -oP [0-9\.]+)
+value=$(./run_test | grep -oP 'Download: [0-9\.]+' | grep -oP [0-9\.]+)
+
+# get influx db ip address
+db_ip=$(cat ./db_ip)
 
 # make api request to influx db
-curl -i -XPOST 'http://localhost:8086/write?db=net' --data-binary "speed value=$value"
+curl -i -XPOST "http://$db_ip:8086/write?db=net" --data-binary "speed,server=$(hostname) value=$value"
 
